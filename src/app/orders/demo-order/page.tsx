@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { ArrowUpRight, Package } from "lucide-react";
+import { redirect } from "next/navigation";
 
-export default function OrderDetailPreviewPage() {
-  return <section className="collection-page page-gutter"><div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/orders">Orders</Link><span>/</span><span>Demo order</span></div><div className="simple-page-heading"><span className="eyebrow">Demonstration only</span><h1>Order <em>details.</em></h1><p>NOORE-DEMO-1042 is sample interface content. It does not represent a transaction.</p></div><div className="order-detail-panel"><div className="order-detail-icon"><Package size={22} /></div><div><span className="eyebrow">Shipment status</span><h2>No shipment connected</h2><p>This page has no live carrier events or delivery estimate. Tracking will appear after a real order and carrier connection exist.</p><Link className="underlined-link" href="/tracking?reference=NOORE-DEMO-1042">Open tracking preview <ArrowUpRight size={15} /></Link></div></div><div className="policy-callout"><span className="eyebrow">Returns</span><p>The return policy has not been finalized. The return-request interface is not available for live submissions.</p><Link className="underlined-link" href="/returns">View return information <span>↗</span></Link></div></section>;
+export default function OldOrderExampleRedirect() {
+  redirect("/orders");
 }

@@ -22,8 +22,10 @@ type StorefrontContextValue = {
 };
 
 const StorefrontContext = createContext<StorefrontContextValue | null>(null);
-const CART_KEY = "noore-preview-cart-v1";
+const CART_KEY = "noore-cart-v1";
+const LEGACY_CART_KEY = "noore-preview-cart-v1";
 const WISHLIST_KEY = "noore-preview-wishlist-v1";
+const knownProducts = new Set(products.map((product) => product.id));
 
 function readLocal<T>(key: string, fallback: T): T {
   try {
@@ -44,10 +46,15 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   // Hydrate browser-only local storage after mount to keep the server HTML deterministic.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const storedCart = readLocal<CartItem[]>(CART_KEY, []);
+    const storedCart = readLocal<CartItem[]>(CART_KEY, readLocal<CartItem[]>(LEGACY_CART_KEY, []));
     const storedWishlist = readLocal<string[]>(WISHLIST_KEY, []);
-    const knownProducts = new Set(products.map((item) => item.id));
-    setCart(storedCart.filter((item) => knownProducts.has(item.productId) && item.quantity > 0));
+    const productById = new Map(products.map((item) => [item.id, item]));
+    setCart(storedCart.flatMap((item) => {
+      const product = productById.get(item.productId);
+      const variant = product?.variants[0];
+      if (!product || !variant || item.quantity < 1) return [];
+      return [{ ...item, variantId: variant.id }];
+    }));
     setWishlist(storedWishlist.filter((id) => knownProducts.has(id)));
     setHydrated(true);
   }, []);
@@ -58,7 +65,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     try {
       localStorage.setItem(CART_KEY, JSON.stringify(cart));
       localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
-    } catch { /* Browser storage is optional for this preview. */ }
+    } catch { /* Browser storage is optional. */ }
   }, [cart, wishlist, hydrated]);
 
   useEffect(() => {
@@ -72,7 +79,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     const product = products.find((item) => item.id === productId);
     const variant = product?.variants.find((item) => item.id === variantId);
     if (!product || !variant || !variant.available || quantity < 1) {
-      setNotice("That sample option is unavailable.");
+      setNotice("This piece is unavailable.");
       return;
     }
     setCart((current) => {
@@ -82,7 +89,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       }
       return [...current, { productId, variantId, quantity: Math.min(10, quantity) }];
     });
-    setNotice("Added to your preview bag.");
+    setNotice("Added to your bag.");
   }, []);
   const setQuantity = useCallback((productId: string, variantId: string, quantity: number) => {
     if (quantity < 1) {
@@ -95,7 +102,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   }, []);
   const removeFromCart = useCallback((productId: string, variantId: string) => {
     setCart((current) => current.filter((item) => !(item.productId === productId && item.variantId === variantId)));
-    setNotice("Removed from your preview bag.");
+    setNotice("Removed from your bag.");
   }, []);
   const toggleWishlist = useCallback((productId: string) => {
     const saved = wishlist.includes(productId);

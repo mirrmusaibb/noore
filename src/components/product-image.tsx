@@ -6,8 +6,9 @@ export function ProductImage({ image, category, className = "" }: {
   className?: string;
 }) {
   return (
-    <div className={`product-image ${className} tone-${category}`}>
-      <div className={`image-art image-art-${image.composition}`} role="img" aria-label={image.alt} style={{ "--art-cloth": image.palette } as React.CSSProperties}>
+    <div className={`product-image tone-${category} ${className}`} role="img" aria-label={image.alt}>
+      <div className={`image-art image-art-${image.composition}`} style={{ "--art-cloth": image.palette } as React.CSSProperties}>
+        <span className="image-art-kicker" aria-hidden="true">NOORE · {category.toUpperCase()}</span>
         <svg className="image-art-svg" viewBox="0 0 800 1000" aria-hidden="true" focusable="false">
           <circle className="art-orbit" cx="400" cy="480" r="285" />
           <circle className="art-orbit art-orbit-inner" cx="400" cy="480" r="245" />
@@ -18,6 +19,12 @@ export function ProductImage({ image, category, className = "" }: {
             <path className="art-fold" d="M391 171c10 116 58 199 126 270" />
             <path className="art-botanical-stem" d="M379 719c10-77 20-148 71-214" />
             <g className="art-blossom" transform="translate(453 500)"><ellipse cy="-22" rx="13" ry="24" /><ellipse cy="-22" rx="13" ry="24" transform="rotate(45)" /><ellipse cy="-22" rx="13" ry="24" transform="rotate(90)" /><ellipse cy="-22" rx="13" ry="24" transform="rotate(135)" /><circle r="10" /></g>
+          </g> : image.composition === "fold" ? <g className="art-fold-study">
+            <path className="art-cloth" d="M175 256c138-119 306-118 450-4l-41 481c-115 65-249 65-369 0z" />
+            <path className="art-fold" d="M245 282c88 86 125 210 131 415M400 252c-3 143-7 284 19 478M540 286c-87 87-114 206-121 441" />
+            <path className="art-botanical-stem" d="M317 725c69-93 129-173 194-247" />
+            <path className="art-leaf" d="M385 655c-71 5-105-30-116-92 57 4 98 30 116 92z" />
+            <path className="art-leaf art-leaf-right" d="M435 584c64-3 97-38 107-96-57 7-93 36-107 96z" />
           </g> : <g className="art-bloom">
             <path className="art-botanical-stem" d="M400 827c-16-117 7-222 0-322-5-74-35-139-66-207" />
             <path className="art-leaf" d="M363 665c-89 7-131-40-145-118 73 5 124 38 145 118z" />
@@ -32,9 +39,7 @@ export function ProductImage({ image, category, className = "" }: {
           <path className="art-baseline" d="M170 875h460" />
           <path className="art-diamond" d="m160 875 10-10 10 10-10 10zM620 875l10-10 10 10-10 10z" />
         </svg>
-        <span className="image-art-kicker">NOORE · {image.composition === "drape" ? "TEXTILE STUDY" : "BOTANICAL STUDY"}</span>
       </div>
-      <span className="image-caption">Artwork placeholder</span>
     </div>
   );
 }

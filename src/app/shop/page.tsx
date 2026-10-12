@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { products } from "@/data/catalogue";
+import { categories, products } from "@/data/catalogue";
 import { CollectionExplorer, type CollectionFilters } from "@/components/collection-explorer";
 
 export const metadata: Metadata = {
-  title: "Shop hijab samples",
-  description: "Browse NOORE’s hijab-only sample catalogue.",
+  title: "Shop the collections",
+  description: "Explore the NOORE collections of hijabs and abayas.",
   alternates: { canonical: "/shop" },
 };
 
@@ -15,16 +15,13 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const query = await searchParams;
   const requestedSort = first(query.sort);
   const initialFilters: Partial<CollectionFilters> = {
-    sort: ["featured", "price-low", "price-high", "newest"].includes(requestedSort ?? "") ? requestedSort as CollectionFilters["sort"] : "featured",
-    colour: first(query.colour) ?? "all",
-    size: first(query.size) ?? "all",
-    availability: first(query.availability) ?? "all",
-    maxPrice: Math.max(500, Math.min(3000, Number(first(query.maxPrice)) || 3000)),
+    sort: ["featured", "price-low", "price-high", "name"].includes(requestedSort ?? "") ? requestedSort as CollectionFilters["sort"] : "featured",
+    maxPrice: Math.max(500, Math.min(6000, Number(first(query.maxPrice)) || 6000)),
   };
   return <section className="collection-page page-gutter">
-    <div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><span>Shop hijabs</span></div>
-    <div className="collection-intro"><span className="eyebrow">NOORE · Hijab collection</span><h1>A first look at<br /><em>the hijab edit.</em></h1><p>Ten fictional hijab styles in a considered palette. Prices and availability are illustrative development data.</p></div>
-    <div className="catalogue-disclaimer"><span>Preview catalogue</span><p>Product visuals are abstract artwork placeholders only. No real photos or model imagery are used.</p></div>
+    <div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><span>All pieces</span></div>
+    <div className="shop-page-intro"><span className="eyebrow">NOORE · Where Haya Blooms</span><h1>The NOORE <em>edit.</em></h1><p>Two collections, considered in colour and framed by botanical detail.</p></div>
+    <nav className="collection-tabs" aria-label="Browse collections"><Link className="is-current" href="/shop" aria-current="page">All pieces <span>{products.length}</span></Link>{categories.map((category) => <Link href={`/collections/${category.slug}`} key={category.slug}>{category.title}</Link>)}</nav>
     <CollectionExplorer products={products} initialFilters={initialFilters} />
   </section>;
 }

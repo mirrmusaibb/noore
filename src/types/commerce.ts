@@ -1,18 +1,14 @@
-export type ProductCategory = "hijabs";
-export type StockStatus = "in-stock" | "out-of-stock";
+export type ProductCategory = "hijabs" | "abayas";
 
 export interface ProductImage {
   id: string;
   alt: string;
-  composition: "drape" | "bloom";
+  composition: "drape" | "bloom" | "fold";
   palette: string;
 }
 
 export interface ProductVariant {
   id: string;
-  label: string;
-  size?: string;
-  colour: string;
   available: boolean;
 }
 
@@ -24,16 +20,10 @@ export interface Product {
   category: ProductCategory;
   description: string;
   price: number;
-  compareAtPrice?: number;
   images: ProductImage[];
   variants: ProductVariant[];
-  sizes: string[];
-  colours: string[];
-  stockStatus: StockStatus;
   featured: boolean;
-  newArrival: boolean;
   createdAt: string;
-  sampleData: true;
 }
 
 export interface CartItem {

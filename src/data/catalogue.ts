@@ -1,79 +1,118 @@
-import type { Product, ProductCategory, ProductImage, ProductVariant } from "@/types/commerce";
+import type { Product, ProductCategory, ProductImage } from "@/types/commerce";
 
-const paletteByColour: Record<string, string> = {
-  Rose: "#b7848a", Olive: "#686b4c", Ink: "#35323a", Blush: "#d8a9ad", Cocoa: "#785f51",
-  Blue: "#556c8a", Sand: "#c8b79f", Berry: "#783344", Ivory: "#d8cfc2", Forest: "#34463b",
-};
-
-const artwork = (id: string, colour: string, composition: ProductImage["composition"]): ProductImage => ({
-  id,
-  alt: `Abstract ${colour.toLowerCase()} hijab artwork placeholder`,
-  composition,
-  palette: paletteByColour[colour] ?? "#782f45",
-});
-
-const samples: Array<{
+type ArtworkSeed = {
   sequence: number;
   name: string;
   price: number;
-  colour: string;
-  description: string;
+  tone: string;
+  palette: string;
+  composition: ProductImage["composition"];
   featured?: boolean;
-  newArrival?: boolean;
-  soldOut?: boolean;
-}> = [
-  { sequence: 11, name: "The Noor Modal Hijab", price: 1290, colour: "Rose", description: "A fictional hijab colour concept in muted rose, shown with abstract artwork placeholders.", featured: true },
-  { sequence: 12, name: "The Gulnar Hijab", price: 1190, colour: "Olive", description: "An illustrative sample shade in olive for a calm, tonal styling direction.", newArrival: true },
-  { sequence: 13, name: "The Aab Hijab", price: 990, colour: "Ink", description: "A fictional sample in a deep ink colour, presented as a simple wardrobe accent." },
-  { sequence: 14, name: "The Haya Hijab", price: 1490, colour: "Blush", description: "A sample colour story in soft blush with a clean, minimal visual direction.", featured: true },
-  { sequence: 15, name: "The Zoya Hijab", price: 1090, colour: "Cocoa", description: "A warm cocoa-toned sample catalogue concept.", featured: true },
-  { sequence: 16, name: "The Safa Hijab", price: 1390, colour: "Blue", description: "A fictional sample shade in deep blue, styled with a composed editorial mood.", newArrival: true, featured: true },
-  { sequence: 17, name: "The Inaya Hijab", price: 1190, colour: "Sand", description: "A soft sand colour direction for this fictional catalogue sample." },
-  { sequence: 18, name: "The Mahnoor Hijab", price: 1590, colour: "Berry", description: "A rich berry sample colour shown as part of the development catalogue." },
-  { sequence: 19, name: "The Saba Hijab", price: 990, colour: "Ivory", description: "A light ivory shade in this illustrative sample collection." },
-  { sequence: 20, name: "The Ruh Hijab", price: 1290, colour: "Forest", description: "A deep forest-green sample styling direction.", newArrival: true, soldOut: true },
-];
+};
 
-const buildVariant = (id: string, colour: string, soldOut = false): ProductVariant => ({
-  id: `${id}-one-size`,
-  label: colour,
-  size: "One size",
-  colour,
-  available: !soldOut,
-});
+const palettes = {
+  rose: "#9b5367",
+  olive: "#69705a",
+  ink: "#403c49",
+  blush: "#c78f98",
+  cocoa: "#80675b",
+  blue: "#657b91",
+  sand: "#b39c83",
+  berry: "#783148",
+  ivory: "#d8cbbd",
+  forest: "#455b4b",
+  plum: "#6e5364",
+  sienna: "#a15f4a",
+  stone: "#968c82",
+  moss: "#777a61",
+  wine: "#64283d",
+  lilac: "#9a8799",
+  copper: "#a96e58",
+  pearl: "#d5c7b7",
+  fig: "#71434d",
+  slate: "#67717c",
+} as const;
 
-export const products: Product[] = samples.map((sample, index) => {
-  const id = `hijab-${String(sample.sequence).padStart(3, "0")}`;
-  const image = artwork(`${id}-drape`, sample.colour, "drape");
-  const secondImage = artwork(`${id}-bloom`, sample.colour, "bloom");
+const concepts: Record<ProductCategory, ArtworkSeed[]> = {
+  hijabs: [
+    { sequence: 11, name: "The Noor Hijab", price: 1290, tone: "muted rose", palette: palettes.rose, composition: "drape", featured: true },
+    { sequence: 12, name: "The Gulnar Hijab", price: 1190, tone: "soft olive", palette: palettes.olive, composition: "bloom" },
+    { sequence: 13, name: "The Aab Hijab", price: 990, tone: "deep ink", palette: palettes.ink, composition: "fold" },
+    { sequence: 14, name: "The Haya Hijab", price: 1490, tone: "warm blush", palette: palettes.blush, composition: "drape", featured: true },
+    { sequence: 15, name: "The Zoya Hijab", price: 1090, tone: "soft cocoa", palette: palettes.cocoa, composition: "fold", featured: true },
+    { sequence: 16, name: "The Safa Hijab", price: 1390, tone: "blue slate", palette: palettes.blue, composition: "bloom", featured: true },
+    { sequence: 17, name: "The Inaya Hijab", price: 1190, tone: "warm sand", palette: palettes.sand, composition: "drape" },
+    { sequence: 18, name: "The Mahnoor Hijab", price: 1590, tone: "deep berry", palette: palettes.berry, composition: "bloom" },
+    { sequence: 19, name: "The Saba Hijab", price: 990, tone: "soft ivory", palette: palettes.ivory, composition: "fold" },
+    { sequence: 20, name: "The Ruh Hijab", price: 1290, tone: "deep forest", palette: palettes.forest, composition: "drape" },
+  ],
+  abayas: [
+    { sequence: 1, name: "The Layl Abaya", price: 4990, tone: "deep plum", palette: palettes.plum, composition: "drape", featured: true },
+    { sequence: 2, name: "The Amani Abaya", price: 5290, tone: "warm sienna", palette: palettes.sienna, composition: "fold" },
+    { sequence: 3, name: "The Safiya Abaya", price: 4590, tone: "soft stone", palette: palettes.stone, composition: "bloom" },
+    { sequence: 4, name: "The Nura Abaya", price: 4890, tone: "quiet moss", palette: palettes.moss, composition: "drape" },
+    { sequence: 5, name: "The Yasmin Abaya", price: 5590, tone: "deep wine", palette: palettes.wine, composition: "bloom", featured: true },
+    { sequence: 6, name: "The Amara Abaya", price: 5790, tone: "soft lilac", palette: palettes.lilac, composition: "fold" },
+    { sequence: 7, name: "The Zahra Abaya", price: 4990, tone: "warm copper", palette: palettes.copper, composition: "drape" },
+    { sequence: 8, name: "The Farah Abaya", price: 5390, tone: "quiet pearl", palette: palettes.pearl, composition: "bloom" },
+    { sequence: 9, name: "The Liyana Abaya", price: 4690, tone: "soft fig", palette: palettes.fig, composition: "fold" },
+    { sequence: 10, name: "The Miral Abaya", price: 5990, tone: "slate blue", palette: palettes.slate, composition: "drape", featured: true },
+  ],
+};
+
+const categoryDetails: Record<ProductCategory, { title: string; description: string; palette: string; composition: ProductImage["composition"] }> = {
+  hijabs: { title: "Hijabs", description: "A considered palette for everyday expression.", palette: palettes.rose, composition: "bloom" },
+  abayas: { title: "Abayas", description: "A measured silhouette, drawn in quiet tones.", palette: palettes.wine, composition: "drape" },
+};
+
+function artwork(id: string, category: ProductCategory, tone: string, palette: string, composition: ProductImage["composition"]): ProductImage {
   return {
     id,
-    slug: id,
-    sku: `DEV-HI-${String(sample.sequence).padStart(3, "0")}`,
-    name: sample.name,
-    category: "hijabs",
-    description: sample.description,
-    price: sample.price,
-    images: [image, secondImage],
-    variants: [buildVariant(id, sample.colour, sample.soldOut)],
-    sizes: ["One size"],
-    colours: [sample.colour],
-    stockStatus: sample.soldOut ? "out-of-stock" : "in-stock",
-    featured: Boolean(sample.featured),
-    newArrival: Boolean(sample.newArrival),
-    createdAt: new Date(Date.UTC(2026, 8, 30 - index)).toISOString(),
-    sampleData: true,
+    alt: `Original ${tone} artwork for the ${category.slice(0, -1)} collection`,
+    composition,
+    palette,
   };
-});
+}
 
-export const categories: Array<{ slug: ProductCategory; title: string; description: string; image: ProductImage }> = [
-  { slug: "hijabs", title: "Hijabs", description: "A considered palette of colour stories for everyday expression.", image: artwork("hijab-collection-bloom", "Berry", "bloom") },
-];
+export const products: Product[] = (Object.keys(concepts) as ProductCategory[]).flatMap((category) =>
+  concepts[category].map((item, index) => {
+    const prefix = category === "hijabs" ? "hijab" : "abaya";
+    const sequence = item.sequence;
+    const id = `${prefix}-${String(sequence).padStart(3, "0")}`;
+    const secondComposition: ProductImage["composition"] = item.composition === "drape" ? "bloom" : "drape";
+    return {
+      id,
+      slug: id,
+      sku: `NO-${prefix.slice(0, 2).toUpperCase()}-${String(sequence).padStart(3, "0")}`,
+      name: item.name,
+      category,
+      description: `A ${item.tone} study for the NOORE ${category.slice(0, -1)} edit, drawn with soft botanical detail.`,
+      price: item.price,
+      images: [
+        artwork(`${id}-one`, category, item.tone, item.palette, item.composition),
+        artwork(`${id}-two`, category, item.tone, item.palette, secondComposition),
+      ],
+      variants: [{ id: `${id}-standard`, available: true }],
+      featured: Boolean(item.featured),
+      createdAt: new Date(Date.UTC(2026, 8, 30 - index)).toISOString(),
+    };
+  }),
+);
+
+export const categories: Array<{ slug: ProductCategory; title: string; description: string; image: ProductImage }> = (
+  Object.entries(categoryDetails) as [ProductCategory, (typeof categoryDetails)[ProductCategory]][]
+).map(([slug, item]) => ({
+  slug,
+  title: item.title,
+  description: item.description,
+  image: artwork(`${slug}-collection`, slug, "deep botanical", item.palette, item.composition),
+}));
 
 export const productBySlug = (slug: string) => products.find((item) => item.slug === slug);
-export const categoryLabel = (category: ProductCategory) => category[0].toUpperCase() + category.slice(1);
+export const categoryLabel = (category: ProductCategory) => categoryDetails[category].title;
 
 export const catalogueCounts = {
   total: products.length,
-  hijabs: products.length,
+  abayas: products.filter((product) => product.category === "abayas").length,
+  hijabs: products.filter((product) => product.category === "hijabs").length,
 };
